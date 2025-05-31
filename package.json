@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "mongodb": "^6.16.0"
+  },
+  "name": "codemate-backend",
+  "version": "1.0.0",
+  "description": "tinder for devs",
+  "main": "index.js",
+  "devDependencies": {},
+   "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "author": "Gaurav Anand",
+  "license": "ISC"
+}
