@@ -6,28 +6,15 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const cookies = req.cookies;
-    const { token } = cookies;
-    //console.log(token);
-    //const { token } = cookies;
-    // Validation by token
-    if (!token) {
-      throw new Error("Invalid token");
-    }
-    const decodedMessage = await jwt.verify(token, "Gaurav@1234");
-    const { _id } = decodedMessage;
-    //console.log(_id);
-    const user = await User.findById(_id);
-    if (!user) {
-      throw new Error("Please Login Again");
-    }
+    const user = req.user;
     res.send(user);
   } catch (err) {
     res.status(400).send(err.message);
@@ -62,57 +49,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.patch("/user/:userId", async (req, res) => {
-  try {
-    const userId = req.params?.userId;
-    const data = req.body;
-    const ALLOWED = ["photoUrl", "about", "gender", "age", "skills"];
-    const isUpdateAllowed = Object.keys(data).every((k) => ALLOWED.includes(k));
-
-    if (!isUpdateAllowed) {
-      throw new Error("Update Not Allowed");
-    }
-
-    const user = await User.findByIdAndUpdate(userId, data, {
-      runValidators: true,
-    });
-    res.send("User Updated Succesfully");
-  } catch (err) {
-    res.status(404).send(err.message);
-  }
-});
-
-app.delete("/user", async (req, res) => {
-  try {
-    const user = await User.findByIdAndDelete(req.body.userId);
-    res.send("User Deleted Succesfully");
-  } catch (err) {
-    res.status(404).send("User Not Found");
-  }
-});
-
-app.get("/user", async (req, res) => {
-  try {
-    const user = await User.findOne({ emailId: req.body.emailId });
-    if (!user) {
-      res.status(404).send("User Not Found");
-    } else {
-      res.send(user);
-    }
-  } catch (err) {
-    res.status(404).send("User Not Found");
-  }
-});
-
-app.get("/feed", async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (err) {
-    res.status(404).send("User Not Found");
-  }
-});
-
 app.post("/signup", async (req, res) => {
   //console.log(req.body);
   try {
@@ -135,6 +71,12 @@ app.post("/signup", async (req, res) => {
   } catch (err) {
     res.status(400).send(err.message);
   }
+});
+
+app.post("/sendConnectionRequest", userAuth, (req, res) => {
+  const user = req.user;
+  // Connection Login
+  res.send(user.firstName + " is sending connection request");
 });
 
 connectDB()
