@@ -45,16 +45,16 @@ profileRouter.patch("/profile/forgotPassword", userAuth, async (req, res) => {
       existingPassword,
       req.user.password
     );
-    console.log("existingPassword", existingPassword);
-    console.log("isValidPassword", isValidPassword);
+    //console.log("existingPassword", existingPassword);
+    //console.log("isValidPassword", isValidPassword);
     if (!isValidPassword) {
       throw new Error("existing password is incorrect");
     }
 
     const newPassword = req.body.newPassword;
-    console.log("newPassword", newPassword);
+    // console.log("newPassword", newPassword);
     const passwordHash = await bcrypt.hash(newPassword, 10);
-    console.log("passwordHash", passwordHash);
+    //console.log("passwordHash", passwordHash);
     req.user.password = passwordHash;
     await req.user.save();
     res.send("New Password Updated");
