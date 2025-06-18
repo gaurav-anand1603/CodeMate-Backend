@@ -31,7 +31,10 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
       return res.status(404).send("User not found");
     }
 
-    res.status(200).send("Profile updated successfully");
+    res.json({
+      message: "Succesfully Updated",
+      data: user,
+    });
   } catch (err) {
     res.status(400).send("ERROR" + err.message);
   }

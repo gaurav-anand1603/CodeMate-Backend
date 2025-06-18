@@ -30,6 +30,7 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
 userRouter.get("/user/requests/connections", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
+    console.log(loggedInUser);
     const data = await ConnectionRequest.find({
       $or: [
         {
@@ -60,12 +61,14 @@ userRouter.get("/user/requests/connections", userAuth, async (req, res) => {
         "about",
         "skills",
       ]);
+    console.log(data);
     const filteredData = data.map((row) => {
       if (row.fromUserId._id.equals(loggedInUser._id)) {
         return row.toUserId;
       }
       return row.fromUserId;
     });
+    console.log("Filtered Data:", filteredData);
     res.json({
       message: "Data sent succesfully ",
       data: filteredData,
