@@ -9,7 +9,7 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
     const loggedInUser = req.user;
     const data = await ConnectionRequest.find({
       toUserId: loggedInUser._id,
-      status: "accepted",
+      status: "interested",
     }).populate("fromUserId", [
       "firstName",
       "lastName",
@@ -91,6 +91,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     });
 
     const toHideUsers = new Set();
+    toHideUsers.add(loggedInUser._id.toString());
     connectionRequest.forEach((data) => {
       toHideUsers.add(data.toUserId.toString());
       toHideUsers.add(data.fromUserId.toString());
